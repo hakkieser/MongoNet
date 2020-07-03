@@ -1,5 +1,5 @@
 # MongoNet
-This package contains CRUD functions with mongodb driver functions like find that are ready for use for MongoDB.
+This package contains CRUD functions with mongodb driver functions like find that are ready for use for MongoDB .Net Core
 
 ### Step 1: Add connection class
 ```
