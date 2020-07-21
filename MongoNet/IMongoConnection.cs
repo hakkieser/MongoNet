@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MongoNet
+namespace MongoDB.MongoNet
 {
     public interface  IMongoConnection
     {

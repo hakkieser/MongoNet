@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MongoNet
+namespace MongoDB.MongoNet
 {
     public interface IRepository<TEntity>
     {

@@ -13,7 +13,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MongoNet
+namespace MongoDB.MongoNet
 {
     public class MongoDbRepository<TEntity, TMongoConnection> : IRepository<TEntity>
         where TEntity : EntityBase
@@ -55,7 +55,7 @@ namespace MongoNet
                     x.AutoMap();
                     x.SetIgnoreExtraElements(true); 
                 });
-            }
+            } 
 
             GetDatabase();
             GetCollection();
