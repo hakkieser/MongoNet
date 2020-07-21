@@ -40,15 +40,13 @@ namespace MongoNet
 
         public MongoDbRepository()
         {
-            List<string> _mongoConnectionTypeName = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes())
-                                                   .Where(x => typeof(TMongoConnection).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract)
-                                                   .Select(x => x.AssemblyQualifiedName).ToList();
-            Type _mongoConnectionType = Type.GetType(_mongoConnectionTypeName.FirstOrDefault());
+            mongoConnection = ((IMongoConnection)Activator.CreateInstance(typeof(TMongoConnection))); 
 
-            mongoConnection = ((IMongoConnection)Activator.CreateInstance(_mongoConnectionType));
-
-
-            BsonSerializer.RegisterSerializer(typeof(Guid), new GuidSerializer(BsonType.String));
+            try
+            {
+                BsonSerializer.RegisterSerializer(typeof(Guid), new GuidSerializer(BsonType.String));
+            }
+            catch { }
 
             if (!BsonClassMap.IsClassMapRegistered(typeof(TEntity)))
             { 
@@ -58,9 +56,6 @@ namespace MongoNet
                     x.SetIgnoreExtraElements(true); 
                 });
             }
-
-          
-           
 
             GetDatabase();
             GetCollection();
