@@ -8,11 +8,12 @@ using System.Threading.Tasks;
 
 namespace MongoDB.MongoNet
 {
-   public class EntityBase
-    { 
+    [Serializable]
+    public class EntityBase
+    {
         [BsonId]
         public ObjectId Id { get; set; }
         public DateTime CreateDate { get; set; }
-        public DateTime UpdateDate { get; set; } 
+        public DateTime UpdateDate { get; set; }
     }
 }
