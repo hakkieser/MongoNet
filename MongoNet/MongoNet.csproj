@@ -5,11 +5,12 @@
     <Description>This package contains CRUD functions with mongodb driver functions like find that are ready for use for MongoDB .Net Core</Description>
     <PackageProjectUrl>https://github.com/hakkieser/MongoNet</PackageProjectUrl>
     <RepositoryUrl>https://github.com/hakkieser/MongoNet</RepositoryUrl>
-    <PackageTags>mongodb, mongonet, mongodb repo, mongodb crud, mongodb driver, mongo</PackageTags>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageTags>repo, repository, mongodb, mongonet, mongodb repo, mongodb crud, mongodb driver, mongo</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>MongoDB.MongoNet</PackageId>
     <Authors>Hakkı Eser</Authors>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
+    <AssemblyVersion>1.0.2.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
