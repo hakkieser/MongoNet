@@ -63,7 +63,7 @@ namespace MongoDB.MongoNet
 
         public TEntity Insert(TEntity entity)
         {
-            entity.Id = ObjectId.GenerateNewId();
+            entity.Id = ObjectId.GenerateNewId().ToString();
             entity.CreateDate = DateTime.Now;
             entity.UpdateDate = DateTime.Now;
             collection.InsertOne(entity);
@@ -72,7 +72,7 @@ namespace MongoDB.MongoNet
         }
         public void Insert(TEntity entity, Action<TEntity> callback)
         {
-            entity.Id = ObjectId.GenerateNewId();
+            entity.Id = ObjectId.GenerateNewId().ToString();
             entity.CreateDate = DateTime.Now;
             entity.UpdateDate = DateTime.Now;
             collection.InsertOne(entity);
@@ -100,14 +100,14 @@ namespace MongoDB.MongoNet
 
         public DeleteResult Delete(string Id)
         {
-            var filter = Builders<TEntity>.Filter.Eq(x => x.Id, ObjectId.Parse(Id));
+            var filter = Builders<TEntity>.Filter.Eq(x => ObjectId.Parse(x.Id), ObjectId.Parse(Id));
             DeleteResult result = collection.DeleteOne(filter);
 
             return result;
         }
         public DeleteResult Delete(string Id, Action<DeleteResult> callback)
         {
-            var filter = Builders<TEntity>.Filter.Eq(x => x.Id, ObjectId.Parse(Id));
+            var filter = Builders<TEntity>.Filter.Eq(x => ObjectId.Parse(x.Id), ObjectId.Parse(Id));
             DeleteResult result = collection.DeleteOne(filter);
 
             callback(result);
@@ -132,7 +132,7 @@ namespace MongoDB.MongoNet
 
         public TEntity GetById(string id)
         {
-            var filter = Builders<TEntity>.Filter.Eq(x => x.Id, ObjectId.Parse(id));
+            var filter = Builders<TEntity>.Filter.Eq(x => ObjectId.Parse(x.Id), ObjectId.Parse(id));
             return collection.Find(filter).ToList().First();
         }
         public int Count()
