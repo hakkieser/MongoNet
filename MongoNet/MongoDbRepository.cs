@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Bson.Serialization.IdGenerators;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
@@ -40,7 +41,10 @@ namespace MongoDB.MongoNet
 
         public MongoDbRepository()
         {
-            mongoConnection = ((IMongoConnection)Activator.CreateInstance(typeof(TMongoConnection))); 
+            mongoConnection = ((IMongoConnection)Activator.CreateInstance(typeof(TMongoConnection)));
+
+            var conventionPack = new ConventionPack { new IgnoreExtraElementsConvention(true) };
+            ConventionRegistry.Register("IgnoreExtraElements", conventionPack, type => true);
 
             try
             {
@@ -52,13 +56,13 @@ namespace MongoDB.MongoNet
             { 
                 BsonClassMap.RegisterClassMap<TEntity>(x =>
                 {
-                    x.AutoMap();
-                    x.SetIgnoreExtraElements(true); 
+                    x.SetIgnoreExtraElements(true);
+                    x.AutoMap(); 
                 });
-            } 
-
+            }
+          
             GetDatabase();
-            GetCollection();
+            GetCollection();   
         }
 
         public TEntity Insert(TEntity entity)
