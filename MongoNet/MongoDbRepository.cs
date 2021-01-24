@@ -53,16 +53,16 @@ namespace MongoDB.MongoNet
             catch { }
 
             if (!BsonClassMap.IsClassMapRegistered(typeof(TEntity)))
-            { 
+            {
                 BsonClassMap.RegisterClassMap<TEntity>(x =>
                 {
                     x.SetIgnoreExtraElements(true);
-                    x.AutoMap(); 
+                    x.AutoMap();
                 });
             }
-          
+
             GetDatabase();
-            GetCollection();   
+            GetCollection();
         }
 
         public TEntity Insert(TEntity entity)
@@ -74,31 +74,21 @@ namespace MongoDB.MongoNet
 
             return entity;
         }
-        public void Insert(TEntity entity, Action<TEntity> callback)
-        {
-            entity.Id = ObjectId.GenerateNewId().ToString();
-            entity.CreateDate = DateTime.Now;
-            entity.UpdateDate = DateTime.Now;
-            collection.InsertOne(entity);
 
-            callback(entity);
-        }
-
-        public ReplaceOneResult Update(TEntity entity)
+        public ReplaceOneResult Update(TEntity entity, DateTime? _updateDate = null)
         {
             var filter = Builders<TEntity>.Filter.Eq(x => x.Id, entity.Id);
-            entity.UpdateDate = DateTime.Now;
-            ReplaceOneResult result = collection.ReplaceOne(filter, entity);
-            return result;
-        }
-        public ReplaceOneResult Update(TEntity entity, Action<TEntity> callback)
-        {
-            var filter = Builders<TEntity>.Filter.Eq(x => x.Id, entity.Id);
-            entity.UpdateDate = DateTime.Now;
-            ReplaceOneResult result = collection.ReplaceOne(filter, entity);
 
-            callback(entity);
+            if (_updateDate == null)
+            {
+                entity.UpdateDate = DateTime.Now;
+            }
+            else
+            {
+                entity.UpdateDate = (DateTime)_updateDate;
+            }
 
+            ReplaceOneResult result = collection.ReplaceOne(filter, entity);
             return result;
         }
 
@@ -106,15 +96,6 @@ namespace MongoDB.MongoNet
         {
             var filter = Builders<TEntity>.Filter.Eq(x => x.Id, Id);
             DeleteResult result = collection.DeleteOne(filter);
-
-            return result;
-        }
-        public DeleteResult Delete(string Id, Action<DeleteResult> callback)
-        {
-            var filter = Builders<TEntity>.Filter.Eq(x => x.Id, Id);
-            DeleteResult result = collection.DeleteOne(filter);
-
-            callback(result);
 
             return result;
         }

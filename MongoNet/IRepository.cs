@@ -12,7 +12,7 @@ namespace MongoDB.MongoNet
     public interface IRepository<TEntity>
     {
         TEntity Insert(TEntity entity);
-        ReplaceOneResult Update(TEntity entity);
+        ReplaceOneResult Update(TEntity entity, DateTime? _updateDate);
         DeleteResult Delete(string Id);
         IMongoQueryable<TEntity> Where(Expression<Func<TEntity, bool>> predicate);
         IMongoQueryable<TEntity> Select();
