@@ -25,7 +25,7 @@ public class ExampleEntity : MongoContext<ExampleEntity, MyMongoConnection>
 }
 ```
 
-### Step 3: Call any crud method from anywhere
+### Step 3: Call any create and update method from anywhere
 ```
 ExampleEntity instance = new ExampleEntity(){  });
 instance.Insert();
