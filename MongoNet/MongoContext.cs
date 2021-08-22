@@ -17,8 +17,8 @@ using System.Threading.Tasks;
 
 namespace MongoDB.MongoNet
 {
-    public class MongoDbRepository<TEntity, TMongoConnection>
-        where TEntity : MongoDbRepository<TEntity, TMongoConnection>
+    public class MongoContext<TEntity, TMongoConnection>
+        where TEntity : MongoContext<TEntity, TMongoConnection>
         where TMongoConnection : IMongoConnection
     {
 
@@ -49,7 +49,7 @@ namespace MongoDB.MongoNet
             }
         }
 
-        static MongoDbRepository()
+        static MongoContext()
         {
             mongoConnection = ((IMongoConnection)Activator.CreateInstance(typeof(TMongoConnection)));
 
