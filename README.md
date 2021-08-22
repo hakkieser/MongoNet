@@ -19,26 +19,21 @@ public class MyMongoConnection : IMongoConnection
 
 ### Step 2: Inherit your entity from EntityBase
 ```
-public class ExampleEntity : EntityBase 
+public class ExampleEntity : MongoContext<ExampleEntity, MyMongoConnection> 
 { 
-  public string ExampleField { get; set; } 
-  
-  private static MongoDbRepository<ExampleEntity, MyMongoConnection> _DBContext;
-  public static MongoDbRepository<ExampleEntity, MyMongoConnection> DBContext
-  {
-      get
-      {
-          if (_DBContext == null)
-          {
-              _DBContext = new MongoDbRepository<ExampleEntity, MyMongoConnection>();
-          }
-          return _DBContext;
-      }
-  }
+  public string ExampleField { get; set; }  
 }
 ```
 
 ### Step 3: Call any crud method from anywhere
 ```
-ExampleEntity.DBContext.Insert(new ExampleEntity(){  });
+ExampleEntity instance = new ExampleEntity(){  });
+instance.Insert();
 ```
+
+### Step 4: Call any read method from anywhere
+```
+ExampleEntity.Select().ToList();
+ExampleEntity.Select().Where(w=> w....).ToList();
+```
+
