@@ -338,3 +338,6 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+/WindowsFormsApp1
+/WinFormsApp1
+/MongoNet/Attributes

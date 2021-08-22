@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Bson.Serialization.IdGenerators;
 using MongoDB.Bson.Serialization.Serializers;
@@ -16,22 +17,31 @@ using System.Threading.Tasks;
 
 namespace MongoDB.MongoNet
 {
-    public class MongoDbRepository<TEntity, TMongoConnection> : IRepository<TEntity>
-        where TEntity : EntityBase
+    public class MongoDbRepository<TEntity, TMongoConnection>
+        where TEntity : MongoDbRepository<TEntity, TMongoConnection>
         where TMongoConnection : IMongoConnection
     {
-        private IMongoDatabase database;
-        private IMongoCollection<TEntity> collection;
-        private IMongoConnection mongoConnection;
 
-        public IMongoCollection<TEntity> CollectionContext
+
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
+        public DateTime CreateDate { get; set; }
+        public DateTime UpdateDate { get; set; }
+
+
+        static private readonly IMongoDatabase database;
+        static private readonly IMongoCollection<TEntity> collection;
+        static private readonly IMongoConnection mongoConnection;
+
+        static public IMongoCollection<TEntity> CollectionContext
         {
             get
             {
                 return collection;
             }
         }
-        public IMongoDatabase DatabaseContext
+        static public IMongoDatabase DatabaseContext
         {
             get
             {
@@ -39,7 +49,7 @@ namespace MongoDB.MongoNet
             }
         }
 
-        public MongoDbRepository()
+        static MongoDbRepository()
         {
             mongoConnection = ((IMongoConnection)Activator.CreateInstance(typeof(TMongoConnection)));
 
@@ -61,38 +71,41 @@ namespace MongoDB.MongoNet
                 });
             }
 
-            GetDatabase();
-            GetCollection();
+            database = GetDatabase();
+            collection = GetCollection(database);
         }
 
-        public TEntity Insert(TEntity entity)
+        public TEntity Insert()
         {
-            entity.Id = ObjectId.GenerateNewId().ToString();
-            entity.CreateDate = DateTime.Now;
-            entity.UpdateDate = DateTime.Now;
-            collection.InsertOne(entity);
+            this.Id = ObjectId.GenerateNewId().ToString();
+            this.CreateDate = DateTime.Now;
+            this.UpdateDate = DateTime.Now;
 
-            return entity;
+            collection.InsertOne((TEntity)this);
+
+            return (TEntity)this;
         }
 
-        public ReplaceOneResult Update(TEntity entity, DateTime? _updateDate = null)
+        public ReplaceOneResult Update(DateTime? _updateDate = null)
         {
-            var filter = Builders<TEntity>.Filter.Eq(x => x.Id, entity.Id);
+            var filter = Builders<TEntity>.Filter.Eq(x => x.Id, this.Id);
 
             if (_updateDate == null)
             {
-                entity.UpdateDate = DateTime.Now;
+                this.UpdateDate = DateTime.Now;
             }
             else
             {
-                entity.UpdateDate = (DateTime)_updateDate;
+                this.UpdateDate = (DateTime)_updateDate;
             }
 
-            ReplaceOneResult result = collection.ReplaceOne(filter, entity);
+            ReplaceOneResult result = collection.ReplaceOne(filter, (TEntity)this);
             return result;
         }
 
-        public DeleteResult Delete(string Id)
+
+        #region Static Methods
+        static public DeleteResult Delete(string Id)
         {
             var filter = Builders<TEntity>.Filter.Eq(x => x.Id, Id);
             DeleteResult result = collection.DeleteOne(filter);
@@ -100,53 +113,58 @@ namespace MongoDB.MongoNet
             return result;
         }
 
-        public IMongoQueryable<TEntity> Where(Expression<Func<TEntity, bool>> predicate)
+        static public IMongoQueryable<TEntity> Where(Expression<Func<TEntity, bool>> predicate)
         {
             return collection
                 .AsQueryable<TEntity>()
                     .Where(predicate);
         }
-        public IMongoQueryable<TEntity> Select()
+        static public IMongoQueryable<TEntity> Select()
         {
             return collection.AsQueryable();
         }
-        public IMongoQueryable<TEntity> Paging(int _skip, int _take)
+        static public IMongoQueryable<TEntity> Paging(int _skip, int _take)
         {
             return collection.AsQueryable().Skip(_skip).Take(_take);
         }
 
-        public TEntity GetById(string id)
+        static public TEntity GetById(string id)
         {
             var filter = Builders<TEntity>.Filter.Eq(x => x.Id, id);
             return collection.Find(filter).ToList().First();
         }
-        public int Count()
+        static public int Count()
         {
             return collection.AsQueryable().Count();
         }
+        #endregion
 
         #region Helper Methods
-        private void GetDatabase()
-        {
-            var client = new MongoClient(GetConnectionString());
-            database = client.GetDatabase(GetDatabaseName());
-        }
+       
 
-        private string GetConnectionString()
+        static private string GetConnectionString()
         {
             return mongoConnection.GetConnectionString();
         }
 
-        private string GetDatabaseName()
+        static private string GetDatabaseName()
         {
             return mongoConnection.GetDatabaseName();
         }
 
-        private void GetCollection()
+
+
+        static private IMongoDatabase GetDatabase()
         {
-            collection = database
-                .GetCollection<TEntity>(typeof(TEntity).Name);
+            var client = new MongoClient(GetConnectionString());
+
+            return client.GetDatabase(GetDatabaseName());
         }
+        static private IMongoCollection<TEntity> GetCollection(IMongoDatabase _database)
+        {
+            return _database.GetCollection<TEntity>(typeof(TEntity).Name);
+        }
+
         #endregion
     }
 }
