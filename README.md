@@ -17,7 +17,7 @@ public class MyMongoConnection : IMongoConnection
 }
 ```
 
-### Step 2: Inherit your entity from EntityBase
+### Step 2: Inherit your entity from MongoContext
 ```
 public class ExampleEntity : MongoContext<ExampleEntity, MyMongoConnection> 
 { 
