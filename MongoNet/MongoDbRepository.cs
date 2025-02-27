@@ -1,18 +1,12 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
-using MongoDB.Bson.Serialization.Conventions;
-using MongoDB.Bson.Serialization.IdGenerators;
+using MongoDB.Bson.Serialization.Conventions; 
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
+using System; 
 using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using System.Linq.Expressions; 
 
 namespace MongoDB.MongoNet
 {
@@ -100,17 +94,17 @@ namespace MongoDB.MongoNet
             return result;
         }
 
-        public IMongoQueryable<TEntity> Where(Expression<Func<TEntity, bool>> predicate)
+        public IQueryable<TEntity> Where(Expression<Func<TEntity, bool>> predicate)
         {
             return collection
                 .AsQueryable<TEntity>()
                     .Where(predicate);
         }
-        public IMongoQueryable<TEntity> Select()
+        public IQueryable<TEntity> Select()
         {
             return collection.AsQueryable();
         }
-        public IMongoQueryable<TEntity> Paging(int _skip, int _take)
+        public IQueryable<TEntity> Paging(int _skip, int _take)
         {
             return collection.AsQueryable().Skip(_skip).Take(_take);
         }
