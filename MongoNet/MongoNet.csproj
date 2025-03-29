@@ -1,22 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFrameworks>net472;net8.0</TargetFrameworks>
     <Description>This package contains CRUD functions with mongodb driver functions like find that are ready for use for MongoDB .Net Core</Description>
     <PackageProjectUrl>https://github.com/hakkieser/MongoNet</PackageProjectUrl>
     <RepositoryUrl>https://github.com/hakkieser/MongoNet</RepositoryUrl>
-    <PackageTags>repo, repository, mongodb, mongonet, mongodb repo, mongodb crud, mongodb driver, mongo</PackageTags>
+    <PackageTags>mongodb repository, repo, repository, mongodb, mongonet, mongodb repo, mongodb crud, mongodb driver, mongo</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>MongoDB.MongoNet</PackageId>
     <Authors>Hakkı Eser</Authors>
-    <Version>1.0.8</Version>
-    <AssemblyVersion>1.0.8.0</AssemblyVersion>
-    <FileVersion>1.0.8.0</FileVersion>
+    <Version>1.0.9</Version>
+    <AssemblyVersion>1.0.9.0</AssemblyVersion>
+    <FileVersion>1.0.9.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MongoDB.Bson" Version="3.2.1" />
-    <PackageReference Include="MongoDB.Driver" Version="3.2.1" />
+    <PackageReference Include="MongoDB.Bson" Version="3.3.0" />
+    <PackageReference Include="MongoDB.Driver" Version="3.3.0" />
     <PackageReference Include="MongoDB.Driver.Core" Version="2.30.0" />
   </ItemGroup>
 
