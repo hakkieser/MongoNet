@@ -1,12 +1,12 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
-using MongoDB.Bson.Serialization.Conventions; 
+using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
-using System; 
+using System;
 using System.Linq;
-using System.Linq.Expressions; 
+using System.Linq.Expressions;
 
 namespace MongoDB.MongoNet
 {
@@ -17,6 +17,8 @@ namespace MongoDB.MongoNet
         private IMongoDatabase database;
         private IMongoCollection<TEntity> collection;
         private IMongoConnection mongoConnection;
+
+        private static readonly object _mapLock = new object();
 
         public IMongoCollection<TEntity> CollectionContext
         {
@@ -37,8 +39,12 @@ namespace MongoDB.MongoNet
         {
             mongoConnection = ((IMongoConnection)Activator.CreateInstance(typeof(TMongoConnection)));
 
-            var conventionPack = new ConventionPack { new IgnoreExtraElementsConvention(true) };
-            ConventionRegistry.Register("IgnoreExtraElements", conventionPack, type => true);
+            try
+            {
+                var conventionPack = new ConventionPack { new IgnoreExtraElementsConvention(true) };
+                ConventionRegistry.Register("IgnoreExtraElements", conventionPack, type => true);
+            }
+            catch { }
 
             try
             {
@@ -48,11 +54,17 @@ namespace MongoDB.MongoNet
 
             if (!BsonClassMap.IsClassMapRegistered(typeof(TEntity)))
             {
-                BsonClassMap.RegisterClassMap<TEntity>(x =>
+                lock (_mapLock)
                 {
-                    x.SetIgnoreExtraElements(true);
-                    x.AutoMap();
-                });
+                    if (!BsonClassMap.IsClassMapRegistered(typeof(TEntity)))
+                    {
+                        BsonClassMap.RegisterClassMap<TEntity>(x =>
+                        {
+                            x.SetIgnoreExtraElements(true);
+                            x.AutoMap();
+                        });
+                    }
+                }
             }
 
             GetDatabase();
